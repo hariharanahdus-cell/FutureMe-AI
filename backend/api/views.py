@@ -24,6 +24,9 @@ def future_prediction(request):
 
     name = request.data.get("name")
     age = request.data.get("age")
+    if not age:
+        age = 0
+    age = int(age)
     goal = request.data.get("goal")
     skills = request.data.get("skills")
 
