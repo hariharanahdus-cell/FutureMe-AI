@@ -9,11 +9,11 @@ from rest_framework.response import Response
 from .models import FuturePrediction
 
 
-# Load .env file
+# Load environment variables
 load_dotenv()
 
 
-# Create Gemini Client
+# Gemini Client
 client = genai.Client(
     api_key=os.getenv("GEMINI_API_KEY")
 )
@@ -26,6 +26,7 @@ def future_prediction(request):
     age = request.data.get("age")
     goal = request.data.get("goal")
     skills = request.data.get("skills")
+
 
     prompt = f"""
 You are FutureMe AI.
@@ -46,52 +47,51 @@ Generate:
 Keep the prediction realistic, inspiring, and around 200 words.
 """
 
+
     try:
 
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=prompt
-        )
+        try:
+            response = client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=prompt
+            )
+
+        except Exception:
+            response = client.models.generate_content(
+                model="gemini-2.0-flash-lite",
+                contents=prompt
+            )
+
 
         prediction_text = response.text
+
+
     except Exception:
 
-        response = client.models.generate_content(
-            model="gemini-2.0-flash-lite",
-            contents=prompt
-        )
+        # Backup prediction if Gemini fails
+        prediction_text = f"""
+After 5 Years:
+{name} will continue improving skills in {skills} and move closer to the goal of {goal}.
 
-        prediction_text = response.text
+After 10 Years:
+{name} will gain professional experience and achieve important milestones.
 
-        # Save into MySQL
-        FuturePrediction.objects.create(
-            name=name,
-            age=age,
-            goal=goal,
-            skills=skills,
-            prediction=prediction_text
-        )
+After 15 Years:
+{name} will become successful through dedication, learning, and consistency.
+"""
 
-        return Response({
-            "message": f"Hello {name} 👋",
-            "future": prediction_text
-        })
 
-    except Exception as e:
+    # Save prediction
+    FuturePrediction.objects.create(
+        name=name,
+        age=age,
+        goal=goal,
+        skills=skills,
+        prediction=prediction_text
+    )
 
-        import traceback
-        traceback.print_exc()
 
-        error_message = str(e)
-
-        # Handle Gemini quota errors
-        if "RESOURCE_EXHAUSTED" in error_message or "429" in error_message:
-            return Response({
-                "message": "Gemini quota exceeded",
-                "future": "The Gemini free API quota has been reached. Please wait until the quota resets or use another API key."
-            }, status=429)
-
-        return Response({
-            "message": "Error",
-            "future": error_message
-        }, status=500)
+    return Response({
+        "message": f"Hello {name} 👋",
+        "future": prediction_text
+    })
