@@ -29,66 +29,97 @@ def future_prediction(request):
 
 
     prompt = f"""
-You are FutureMe AI.
+You are FutureMe AI, an expert career and life prediction assistant.
 
-Create a realistic and motivating future prediction.
+Create an inspiring but realistic future journey for this person.
+
+Personal Details:
 
 Name: {name}
-Age: {age}
-Goal: {goal}
-Skills: {skills}
+Current Age: {age}
+Career Goal: {goal}
+Current Skills: {skills}
 
-Generate:
 
-1. After 5 Years
-2. After 10 Years
-3. After 15 Years
+Generate a detailed future roadmap:
 
-Keep the prediction realistic, inspiring, and around 200 words.
+## After 5 Years:
+- Career position
+- Skills developed
+- Professional achievements
+- Personal growth
+
+
+## After 10 Years:
+- Major career milestones
+- Leadership opportunities
+- Financial and professional growth
+- Contributions to society
+- Advanced skills and expertise
+
+
+## After 15 Years:
+- Peak career achievements
+- Recognition and impact
+- Expertise level
+- Life achievements
+- How this person inspires others
+
+
+Make it personalized, motivational, realistic, and emotional.
+Avoid generic statements.
+Write around 400-500 words.
 """
 
 
     try:
 
-        try:
-            response = client.models.generate_content(
-                model="gemini-2.0-flash",
-                contents=prompt
-            )
-
-        except Exception:
-            response = client.models.generate_content(
-                model="gemini-2.0-flash-lite",
-                contents=prompt
-            )
-
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=prompt
+        )
 
         prediction_text = response.text
 
 
-    except Exception:
+    except Exception as e:
 
-        # Backup prediction if Gemini fails
+        print("Gemini Error:", e)
+
         prediction_text = f"""
-After 5 Years:
-{name} will continue improving skills in {skills} and move closer to the goal of {goal}.
+🌟 After 5 Years:
 
-After 10 Years:
-{name} will gain professional experience and achieve important milestones.
+{name} will be progressing strongly toward the goal of {goal}.
+With skills in {skills}, continuous learning will help build a successful career.
 
-After 15 Years:
-{name} will become successful through dedication, learning, and consistency.
+
+🚀 After 10 Years:
+
+{name} will become an experienced professional with strong expertise.
+Years of dedication will create opportunities for leadership, innovation,
+and meaningful achievements.
+
+
+🏆 After 15 Years:
+
+{name} will reach an advanced stage of career growth.
+With experience and knowledge, {name} will become a respected person who
+creates impact and guides future generations.
 """
 
 
-    # Save prediction
-    FuturePrediction.objects.create(
-        name=name,
-        age=age,
-        goal=goal,
-        skills=skills,
-        prediction=prediction_text
-    )
+    try:
+
+        FuturePrediction.objects.create(
+            name=name,
+            age=age,
+            goal=goal,
+            skills=skills,
+            prediction=prediction_text
+        )
+
+    except Exception as e:
+        print("Database Error:", e)
 
 
     return Response({
