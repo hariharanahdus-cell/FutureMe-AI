@@ -12,3 +12,5 @@ dist/
 
 # Django
 db.sqlite3
+# Django static files
+backend/staticfiles/
