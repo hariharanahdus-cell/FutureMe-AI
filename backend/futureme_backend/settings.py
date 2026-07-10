@@ -12,7 +12,7 @@ SECRET_KEY = 'django-insecure-5@6($&7xk=^3(1^if9ssd%p6tw)98&3e%@*+y4sh&mt#f3sl5u
 DEBUG = True
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 
@@ -47,6 +47,8 @@ INSTALLED_APPS = [
 
 
 MIDDLEWARE = [
+
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 
     "corsheaders.middleware.CorsMiddleware",
 
@@ -191,3 +193,4 @@ CORS_ALLOW_ALL_ORIGINS = True
 REST_FRAMEWORK = {
 
 }
+STATIC_ROOT = BASE_DIR / "staticfiles"
