@@ -1,4 +1,5 @@
 import os
+import traceback
 
 from dotenv import load_dotenv
 from google import genai
@@ -9,14 +10,13 @@ from rest_framework.response import Response
 from .models import FuturePrediction
 
 
-# Load environment variables
 load_dotenv()
 
 
-# Gemini Client
 client = genai.Client(
     api_key=os.getenv("GEMINI_API_KEY")
 )
+
 
 
 @api_view(["POST"])
@@ -29,100 +29,110 @@ def future_prediction(request):
 
 
     prompt = f"""
-You are FutureMe AI, an expert career and life prediction assistant.
 
-Create an inspiring but realistic future journey for this person.
+You are FutureMe AI.
 
-Personal Details:
+Create a personalized and motivational future prediction.
+
+User Details:
 
 Name: {name}
-Current Age: {age}
-Career Goal: {goal}
-Current Skills: {skills}
+Age: {age}
+Goal: {goal}
+Skills: {skills}
 
 
-Generate a detailed future roadmap:
-
-## After 5 Years:
-- Career position
-- Skills developed
-- Professional achievements
-- Personal growth
+Give the prediction in exactly this format:
 
 
-## After 10 Years:
-- Major career milestones
-- Leadership opportunities
-- Financial and professional growth
-- Contributions to society
-- Advanced skills and expertise
+After 5 Years:
+
+Write a meaningful paragraph of 3 to 4 lines.
+Explain career growth, skills improvement, achievements,
+and progress towards the goal.
 
 
-## After 15 Years:
-- Peak career achievements
-- Recognition and impact
-- Expertise level
-- Life achievements
-- How this person inspires others
+After 10 Years:
+
+Write a meaningful paragraph of 3 to 4 lines.
+Explain professional success, experience,
+leadership, financial stability and achievements.
 
 
-Make it personalized, motivational, realistic, and emotional.
-Avoid generic statements.
-Write around 400-500 words.
+After 15 Years:
+
+Write a meaningful paragraph of 3 to 4 lines.
+Explain becoming an expert, recognition,
+impact and dream accomplishments.
+
+
+Important:
+- Do not write short sentences.
+- Each section must be a paragraph.
+- Make it realistic and inspiring.
+- Personalize using the user's details.
+
 """
 
 
     try:
 
         response = client.models.generate_content(
+
             model="gemini-2.0-flash",
+
             contents=prompt
+
         )
+
 
         prediction_text = response.text
 
 
+
     except Exception as e:
 
-        print("Gemini Error:", e)
+        traceback.print_exc()
+
 
         prediction_text = f"""
-🌟 After 5 Years:
 
-{name} will be progressing strongly toward the goal of {goal}.
-With skills in {skills}, continuous learning will help build a successful career.
+After 5 Years:
 
-
-🚀 After 10 Years:
-
-{name} will become an experienced professional with strong expertise.
-Years of dedication will create opportunities for leadership, innovation,
-and meaningful achievements.
+{name} will improve skills in {skills} and move closer to becoming a successful {goal}. 
+Through continuous learning and dedication, new opportunities will open and career growth will begin.
 
 
-🏆 After 15 Years:
+After 10 Years:
 
-{name} will reach an advanced stage of career growth.
-With experience and knowledge, {name} will become a respected person who
-creates impact and guides future generations.
+{name} will gain valuable experience and become a skilled professional in the field of {goal}. 
+With strong knowledge and confidence, bigger responsibilities and achievements will come.
+
+
+After 15 Years:
+
+{name} will become an expert with years of experience and strong professional recognition. 
+The journey will inspire others and create a meaningful impact through dedication and hard work.
+
 """
 
 
-    try:
 
-        FuturePrediction.objects.create(
-            name=name,
-            age=age,
-            goal=goal,
-            skills=skills,
-            prediction=prediction_text
-        )
+    FuturePrediction.objects.create(
 
-    except Exception as e:
-        print("Database Error:", e)
+        name=name,
+        age=age,
+        goal=goal,
+        skills=skills,
+        prediction=prediction_text
+
+    )
 
 
     return Response({
+
         "message": f"Hello {name} 👋",
+
         "future": prediction_text
+
     })

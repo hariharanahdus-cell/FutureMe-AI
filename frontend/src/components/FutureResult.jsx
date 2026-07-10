@@ -8,7 +8,8 @@ function FutureResult({future}){
     const text = future.future;
 
 
-    const sections = text.split(/\d+\.\s/);
+    const sections = text.split(/After \d+ Years:/);
+
 
 
     return(
@@ -28,7 +29,7 @@ function FutureResult({future}){
 
                 year="5"
 
-                text={sections[1] || text}
+                text={sections[1]}
 
             />
 
@@ -40,7 +41,7 @@ function FutureResult({future}){
 
                 year="10"
 
-                text={sections[2] || "Your journey continues..."}
+                text={sections[2]}
 
             />
 
@@ -52,10 +53,9 @@ function FutureResult({future}){
 
                 year="15"
 
-                text={sections[3] || "You achieve your dreams..."}
+                text={sections[3]}
 
             />
-
 
 
             <Buttons future={future.future}/>

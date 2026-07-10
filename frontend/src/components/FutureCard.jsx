@@ -1,24 +1,24 @@
-function FutureCard({icon,year,text}){
+function FutureCard({icon, year, text}){
 
 
-return(
+    return(
 
-<div className="future-card">
-
-
-<h2>
-{icon} After {year} Years
-</h2>
+        <div className="future-card">
 
 
-<p>
-{text}
-</p>
+            <h2>
+                {icon} After {year} Years
+            </h2>
 
 
-</div>
+            <p>
+                {text}
+            </p>
 
-)
+
+        </div>
+
+    )
 
 }
 
