@@ -1,15 +1,15 @@
 """
 Django settings for futureme_backend project.
 """
-
+import os
+import dj_database_url
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-5@6($&7xk=^3(1^if9ssd%p6tw)98&3e%@*+y4sh&mt#f3sl5u")
 
-SECRET_KEY = 'django-insecure-5@6($&7xk=^3(1^if9ssd%p6tw)98&3e%@*+y4sh&mt#f3sl5u'
-
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
 
 ALLOWED_HOSTS = ["*"]
@@ -48,11 +48,11 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
 
+    'django.middleware.security.SecurityMiddleware',
+
     "whitenoise.middleware.WhiteNoiseMiddleware",
 
-    "corsheaders.middleware.CorsMiddleware",
-
-    'django.middleware.security.SecurityMiddleware',
+     "corsheaders.middleware.CorsMiddleware",
 
     'django.contrib.sessions.middleware.SessionMiddleware',
 
@@ -111,23 +111,10 @@ WSGI_APPLICATION = 'futureme_backend.wsgi.application'
 # Database
 
 DATABASES = {
-
-    'default': {
-
-        'ENGINE': 'django.db.backends.mysql',
-
-        'NAME': 'futureme_db',
-
-        'USER': 'root',
-
-        'PASSWORD': 'Sudhan@2007',
-
-        'HOST': 'localhost',
-
-        'PORT': '3306',
-
-    }
-
+    "default": dj_database_url.config(
+        conn_max_age=600,
+        ssl_require=True
+    )
 }
 
 
