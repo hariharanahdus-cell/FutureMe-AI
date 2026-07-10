@@ -30,15 +30,11 @@ function UserForm({ setFuture, setLoading }) {
 
 
 
-
     async function generateFuture() {
-
 
         try {
 
-
             setLoading(true);
-
 
 
             const response = await axios.post(
@@ -50,41 +46,32 @@ function UserForm({ setFuture, setLoading }) {
             );
 
 
-
             setFuture(response.data);
 
 
+        } 
+        
+        catch (error) {
 
-        }
+            console.log("Error:", error);
 
-        catch(error) {
+            alert(
+                "AI service is temporarily unavailable. Please try again."
+            );
 
-
-            console.log(error);
-
-
-            alert("Server error");
-
-
-        }
-
-
+        } 
+        
         finally {
-
 
             setLoading(false);
 
-
         }
-
 
     }
 
 
 
-
     return (
-
 
         <div className="form-card">
 
@@ -96,6 +83,8 @@ function UserForm({ setFuture, setLoading }) {
 
 
             <input
+
+                type="text"
 
                 name="name"
 
@@ -111,6 +100,8 @@ function UserForm({ setFuture, setLoading }) {
 
             <input
 
+                type="number"
+
                 name="age"
 
                 placeholder="🎂 Age"
@@ -124,6 +115,8 @@ function UserForm({ setFuture, setLoading }) {
 
 
             <input
+
+                type="text"
 
                 name="goal"
 
@@ -139,6 +132,8 @@ function UserForm({ setFuture, setLoading }) {
 
             <input
 
+                type="text"
+
                 name="skills"
 
                 placeholder="💡 Skills"
@@ -151,19 +146,20 @@ function UserForm({ setFuture, setLoading }) {
 
 
 
-            <button onClick={generateFuture}>
+            <button
+
+                onClick={generateFuture}
+
+            >
 
                 Generate My Future 🚀
 
             </button>
 
 
-
         </div>
 
-
     );
-
 
 }
 
