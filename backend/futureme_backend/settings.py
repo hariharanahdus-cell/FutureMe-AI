@@ -12,7 +12,11 @@ SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-5@6($&7xk=^3(1^if9ssd%p6tw
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [
+    "futureme-backend-a6ox.onrender.com",
+    "localhost",
+    "127.0.0.1"
+]
 
 
 
@@ -184,4 +188,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+]
+CSRF_TRUSTED_ORIGINS = [
+    "https://futureme-backend-a6ox.onrender.com"
 ]
